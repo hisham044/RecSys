@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>All Products - HD Ecommerce</title>
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+    />
+    <style>
+      body {
+        background-color: #dcebfa;
+        font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+        color: #343a40;
+      }
+
+      .navbar {
+        background-color: #e89d64;
+        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+        padding: 10px 20px;
+      }
+
+      .container {
+        margin-top: 50px;
+        padding: 20px;
+      }
+
+      .nav-link {
+        color: #343a40 !important;
+        transition: color 0.3s ease;
+      }
+
+      .nav-link:hover {
+        color: #ff5722 !important;
+      }
+
+      .nav-link.btn {
+        border-radius: 5px;
+        background-color: #459eed;
+        color: #fff !important;
+        padding: 10px 20px;
+        transition: background-color 0.3s ease;
+      }
+
+      .nav-link.btn:hover {
+        background-color: #e64a19;
+      }
+
+      .btn-primary {
+        background-color: #6c757d;
+        border-color: #6c757d;
+        color: #fff;
+        transition: background-color 0.3s ease;
+      }
+
+      .btn-primary:hover {
+        background-color: #0056b3;
+        border-color: #0056b3;
+      }
+
+      .search-bar {
+        display: flex;
+        align-items: center;
+      }
+
+      .search-bar input {
+        border-top-right-radius: 0;
+        border-bottom-right-radius: 0;
+      }
+
+      .search-bar button {
+        border-top-left-radius: 0;
+        border-bottom-left-radius: 0;
+      }
+
+      .navbar-brand {
+        font-size: 24px;
+        font-weight: bold;
+      }
+
+      .navbar-nav {
+        align-items: center;
+      }
+
+      .all-products-title {
+        text-align: center;
+        margin-bottom: 30px;
+        font-size: 32px;
+        font-weight: bold;
+      }
+
+      .product-card:hover {
+        transform: scale(1.05);
+        transition: transform 0.3s ease;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light">
+      <a class="navbar-brand mx-auto" href="#">HD</a>
+      <button
+        class="navbar-toggler"
+        type="button"
+        data-toggle="collapse"
+        data-target="#navbarNav"
+        aria-controls="navbarNav"
+        aria-expanded="false"
+        aria-label="Toggle navigation"
+      >
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse justify-content-between" id="navbarNav">
+        <div class="search-bar mx-auto">
+          <input
+            type="text"
+            class="form-control"
+            id="searchInput"
+            placeholder="Search products..."
+          />
+          <button class="btn btn-primary" onclick="searchProducts()">
+            <i class="fas fa-search"></i>
+          </button>
+        </div>
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('index') }}"><i class="fas fa-home"></i> Home</a>
+          </li>
+          <li class="nav-item">
+            <a
+              class="nav-link btn btn-outline-danger mr-2"
+              href="#"
+              data-toggle="modal"
+              data-target="#signupModal"
+              >Sign Up</a
+            >
+          </li>
+          <li class="nav-item">
+            <a
+              class="nav-link btn btn-danger"
+              href="#"
+              data-toggle="modal"
+              data-target="#signinModal"
+              >Sign In</a
+            >
+          </li>
+        </ul>
+      </div>
+    </nav>
+
+    <!-- All Products Section -->
+    <div class="container mt-5">
+      <h2 class="all-products-title">All Products</h2>
+
+      <!-- Product Cards -->
+      <div class="row mt-4" id="productList">
+        {% for index, product in all_products.iterrows() %}
+        <div class="col-lg-3 col-md-4 col-sm-6 mb-4 product-card" data-name="{{ product['Name'] }}">
+          <div class="card" onclick="showProductModal({{ index }})">
+            <img
+              src="{{ random_product_image_urls[loop.index0] }}"
+              class="card-img-top"
+              alt="{{ product['Name'] }}"
+              style="height: 200px"
+            />
+            <div class="card-body">
+              <h5 class="card-title">{{ truncate(product['Name'], 12) }}</h5>
+              <p class="card-text">Brand: {{ product['Brand'] }}</p>
+              <p class="card-text">Rating: {{ product['Rating'] }}</p>
+              <p class="card-text">Price: ${{ random_price }}</p>
+            </div>
+          </div>
+        </div>
+        <!-- Modal -->
+        <div
+          class="modal fade"
+          id="productModal{{ index }}"
+          tabindex="-1"
+          role="dialog"
+          aria-labelledby="productModalLabel{{ index }}"
+          aria-hidden="true"
+        >
+          <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="productModalLabel{{ index }}">{{ product['Name'] }}</h5>
+                <button
+                  type="button"
+                  class="close"
+                  data-dismiss="modal"
+                  aria-label="Close"
+                >
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                <div class="container-fluid">
+                  <div class="row">
+                    <div class="col-md-6">
+                      <img
+                        src="{{ random_product_image_urls[loop.index0] }}"
+                        class="img-fluid"
+                        alt="{{ product['Name'] }}"
+                      />
+                    </div>
+                    <div class="col-md-6">
+                      <p><strong>Brand:</strong> {{ product['Brand'] }}</p>
+                      <p><strong>Rating:</strong> {{ product['Rating'] }}</p>
+                      <p><strong>Review Count:</strong> {{ product['Reviews Count'] }}</p>
+                      <p><strong>Description:</strong></p>
+                      <p>
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                        Suspendisse malesuada lacus ex, sit amet blandit leo
+                        lobortis eget.
+                      </p>
+                      <p><strong>Price:</strong> ${{ random_price }}</p>
+                      
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="modal-footer">
+                <button
+                  type="button"
+                  class="btn btn-primary"
+                  data-dismiss="modal">
+                  Add to Cart
+                </button>
+                <button
+                  type="button"
+                  class="btn btn-primary"
+                  data-dismiss="modal"
+                >
+                  Buy Now
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- Pagination -->
+    <div class="container mt-4">
+      <nav aria-label="Page navigation example">
+        <ul class="pagination justify-content-center">
+          <li class="page-item disabled">
+            <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Previous</a>
+          </li>
+          <li class="page-item active"><a class="page-link" href="#">1</a></li>
+          <li class="page-item"><a class="page-link" href="#">2</a></li>
+          <li class="page-item"><a class="page-link" href="#">3</a></li>
+          <li class="page-item">
+            <a class="page-link" href="#">Next</a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <script>
+      function searchProducts() {
+        var input = document.getElementById('searchInput').value.toLowerCase();
+        var productCards = document.getElementsByClassName('product-card');
+
+        for (var i = 0; i < productCards.length; i++) {
+          var productName = productCards[i].getAttribute('data-name').toLowerCase();
+
+          if (productName.includes(input)) {
+            productCards[i].style.display = 'block';
+          } else {
+            productCards[i].style.display = 'none';
+          }
+        }
+      }
+
+      function showProductModal(index) {
+        $('#productModal' + index).modal('show');
+      }
+    </script>
+  </body>
+</html>
