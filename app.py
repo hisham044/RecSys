@@ -44,8 +44,7 @@ def main():
 
 @app.route("/all-products")
 def all_products():
-    search_query = request.args.get('search')
-    
+    search_query = request.args.get('search')    
     if search_query:
         filtered_products = train_data[train_data.apply(lambda row: search_query.lower() in row.astype(str).str.lower().values, axis=1)]
     else:
