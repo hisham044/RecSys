@@ -14,3 +14,4 @@ venv.bak/
 *.env
 *.venv
 E-Commerece-Recommendation-System/
+templates/trail.html

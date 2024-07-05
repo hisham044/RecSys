@@ -12,146 +12,154 @@
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
     />
-    <style>
-      body {
-        background-color: #dcebfa;
-        font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-        color: #343a40;
-      }
-
-      .navbar {
-        background-color: #e89d64;
-        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-        padding: 10px 20px;
-      }
-
-      .container {
-        margin-top: 50px;
-        padding: 20px;
-      }
-
-      .nav-link {
-        color: #343a40 !important;
-        transition: color 0.3s ease;
-      }
-
-      .nav-link:hover {
-        color: #ff5722 !important;
-      }
-
-      .nav-link.btn {
-        border-radius: 5px;
-        background-color: #459eed;
-        color: #fff !important;
-        padding: 10px 20px;
-        transition: background-color 0.3s ease;
-      }
-
-      .nav-link.btn:hover {
-        background-color: #e64a19;
-      }
-
-      .btn-primary {
-        background-color: #6c757d;
-        border-color: #6c757d;
-        color: #fff;
-        transition: background-color 0.3s ease;
-      }
-
-      .btn-primary:hover {
-        background-color: #0056b3;
-        border-color: #0056b3;
-      }
-
-      .search-bar {
-        display: flex;
-        align-items: center;
-      }
-
-      .search-bar input {
-        border-top-right-radius: 0;
-        border-bottom-right-radius: 0;
-      }
-
-      .search-bar button {
-        border-top-left-radius: 0;
-        border-bottom-left-radius: 0;
-      }
-
-      .navbar-brand {
-        font-size: 24px;
-        font-weight: bold;
-      }
-
-      .navbar-nav {
-        align-items: center;
-      }
-
-      .all-products-title {
-        text-align: center;
-        margin-bottom: 30px;
-        font-size: 32px;
-        font-weight: bold;
-      }
-
-      .product-card:hover {
-        transform: scale(1.05);
-        transition: transform 0.3s ease;
-      }
-    </style>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
   </head>
   <body>
     <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-light">
-      <a class="navbar-brand mx-auto" href="#">HD</a>
-      <button
-        class="navbar-toggler"
-        type="button"
-        data-toggle="collapse"
-        data-target="#navbarNav"
-        aria-controls="navbarNav"
-        aria-expanded="false"
-        aria-label="Toggle navigation"
-      >
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse justify-content-between" id="navbarNav">
-        <div class="search-bar mx-auto">
-          <input
-            type="text"
-            class="form-control"
-            id="searchInput"
-            placeholder="Search products..."
-          />
-          <button class="btn btn-primary" onclick="searchProducts()">
-            <i class="fas fa-search"></i>
-          </button>
+    <nav class="navbar navbar-expand-lg navbar-light">      
+      <a class="navbar-brand" href="{{ url_for('index') }}"><i class="fas fa-home"></i> Home</a>
+      <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
+          <div class="search-bar mx-auto">
+            <input
+              type="text"
+              class="form-control"
+              id="searchInput"
+              placeholder="Search products..."
+            />
+            <button class="btn btn-primary" onclick="searchProducts()">
+              <i class="fas fa-search"></i>
+            </button>
+          </div>
         </div>
-        <ul class="navbar-nav">
-          <li class="nav-item">
-            <a class="nav-link" href="{{ url_for('index') }}"><i class="fas fa-home"></i> Home</a>
-          </li>
-          <li class="nav-item">
-            <a
-              class="nav-link btn btn-outline-danger mr-2"
-              href="#"
-              data-toggle="modal"
-              data-target="#signupModal"
-              >Sign Up</a
-            >
-          </li>
-          <li class="nav-item">
-            <a
-              class="nav-link btn btn-danger"
-              href="#"
-              data-toggle="modal"
-              data-target="#signinModal"
-              >Sign In</a
-            >
-          </li>
+        <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+          <ul class="navbar-nav">
+            <li class="nav-item">
+              <a
+                class="nav-link btn btn-outline-danger mr-2"
+                href="#"
+                data-toggle="modal"
+                data-target="#signupModal"
+                >Sign Up</a
+              >
+            </li>
+            <li class="nav-item">
+              <a
+                class="nav-link btn btn-danger"
+                href="#"
+                data-toggle="modal"
+                data-target="#signinModal"
+                >Sign In</a
+              >
+            </li>
         </ul>
       </div>
     </nav>
+
+    <!-- Bootstrap modal for sign up -->
+    <div
+      class="modal fade"
+      id="signupModal"
+      tabindex="-1"
+      aria-labelledby="signupModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="signupModalLabel">Sign Up</h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <form action="/signup" method="post">
+              <div class="mb-3">
+                <label for="username" class="form-label">Username</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="username"
+                  name="username"
+                  required
+                />
+              </div>
+              <div class="mb-3">
+                <label for="email" class="form-label">Email</label>
+                <input
+                type="email"
+                class="form-control"
+                id="email"
+                name="email"
+                required
+                />
+              </div>
+              <div class="mb-3">
+                <label for="password" class="form-label">Password</label>
+                <input
+                type="password"
+                class="form-control"
+                id="password"
+                name="password"
+                required
+                />
+              </div>
+              <button type="submit" class="btn btn-primary">Sign Up</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bootstrap modal for sign in -->
+    <div
+      class="modal fade"
+      id="signinModal"
+      tabindex="-1"
+      aria-labelledby="signinModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="signinModalLabel">Sign In</h5>
+            <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="modal"
+            aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <form action="/signin" method="post">
+              <div class="mb-3">
+                <label for="signinUsername" class="form-label">Username</label>
+                <input
+                  type="text"
+                  class="form-control" 
+                  id="signinUsername" 
+                  name="signinUsername" 
+                  required
+                />
+              </div>
+              <div class="mb-3">
+                <label for="signinPassword" class="form-label">Password</label>
+                <input 
+                  type="password" 
+                  class="form-control" 
+                  id="signinPassword" 
+                  name="signinPassword" 
+                  required
+                  />
+              </div>
+              <button type="submit" class="btn btn-primary">Sign In</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <!-- All Products Section -->
     <div class="container mt-5">
@@ -161,18 +169,18 @@
       <div class="row mt-4" id="productList">
         {% for index, product in all_products.iterrows() %}
         <div class="col-lg-3 col-md-4 col-sm-6 mb-4 product-card" data-name="{{ product['Name'] }}">
-          <div class="card" onclick="showProductModal({{ index }})">
+          <div class="card" onclick="showProductModal('{{ index }}')">
             <img
-              src="{{ random_product_image_urls[loop.index0] }}"
+              src="{{ product['ImageURL'] }}"
               class="card-img-top"
               alt="{{ product['Name'] }}"
               style="height: 200px"
             />
             <div class="card-body">
-              <h5 class="card-title">{{ truncate(product['Name'], 12) }}</h5>
+              <h5 class="card-title">{{ truncate(product['Name'], 17) }}</h5>
               <p class="card-text">Brand: {{ product['Brand'] }}</p>
               <p class="card-text">Rating: {{ product['Rating'] }}</p>
-              <p class="card-text">Price: ${{ random_price }}</p>
+              <p class="card-text">Price: ${{ product['Price'] }}</p>
             </div>
           </div>
         </div>
@@ -203,7 +211,7 @@
                   <div class="row">
                     <div class="col-md-6">
                       <img
-                        src="{{ random_product_image_urls[loop.index0] }}"
+                        src="{{ product['ImageURL'] }}"
                         class="img-fluid"
                         alt="{{ product['Name'] }}"
                       />
@@ -211,14 +219,12 @@
                     <div class="col-md-6">
                       <p><strong>Brand:</strong> {{ product['Brand'] }}</p>
                       <p><strong>Rating:</strong> {{ product['Rating'] }}</p>
-                      <p><strong>Review Count:</strong> {{ product['Reviews Count'] }}</p>
+                      <p><strong>Review Count:</strong> {{ product['ReviewCount'] }}</p>
                       <p><strong>Description:</strong></p>
                       <p>
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                        Suspendisse malesuada lacus ex, sit amet blandit leo
-                        lobortis eget.
+                        {{ product['Description'] }}
                       </p>
-                      <p><strong>Price:</strong> ${{ random_price }}</p>
+                      <p><strong>Price:</strong> ${{ product['Price'] }}</p>
                       
                     </div>
                   </div>
