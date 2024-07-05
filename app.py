@@ -1,4 +1,5 @@
-from flask import Flask, request, render_template
+from flask import Flask, request, render_template, session, redirect, url_for, jsonify
+from flask_session import Session
 import pandas as pd
 import random
 
@@ -6,22 +7,24 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
 app = Flask(__name__)
+app.secret_key = 'supersecretkey'
+
+# Configure session to use filesystem (server-side session)
+app.config['SESSION_TYPE'] = 'filesystem'
+Session(app)
 
 # Load files
 trending_products = pd.read_csv("models/trending_new.csv")
-# train_data = pd.read_csv("models/clean_data.csv")
 all_products_data = pd.read_csv("models/data_s2.csv")
 
-"""
-all_products Data columns: ['ID', 'ProdID', 'Rating', 'ReviewCount', 'Category', 'Brand', 'Name', 'Price', 'ImageURL', 'Description', 'Tags']
-"""
-
-# Recommendations functions
+# Truncate function
 def truncate(text, length):
     if len(text) > length:
         return text[:length] + "..."
     else:
         return text
+
+# Helper functions and recommendations
 
 def get_products(data, index, n):
     return data[index:index+n]
@@ -125,6 +128,7 @@ def hybrid_recommendations(data, target_user_id, item_name, top_n=10):
     
     return hybrid_rec.head(top_n)
 
+
 @app.route("/")
 def index():
     user = 4
@@ -142,13 +146,41 @@ def all_products():
         
     return render_template('all_products.html', all_products=filtered_products, truncate=truncate)
 
-
 @app.route("/product/<int:product_id>")
 def product_detail(product_id):
     product = all_products_data.loc[product_id]
     similar_products = content_based_recommendations(all_products_data, product['Name'], 8)
     return render_template('product.html', product=product, similar_products=similar_products, truncate=truncate)
 
+@app.route("/add-to-cart", methods=["POST"])
+def add_to_cart():
+    product_id = request.json.get("product_id")
+    product = all_products_data.loc[product_id]
+    cart = session.get("cart", [])
+    cart.append(product_id)
+    session["cart"] = cart
+    return jsonify({"message": "Added to cart!"})
+
+@app.route("/cart")
+def cart():
+    cart = session.get("cart", [])
+    cart_products = all_products_data.loc[cart]
+    total_price = cart_products["Price"].sum()
+
+    recommendations = []
+    for product_id in cart:
+        product = all_products_data.loc[product_id]
+        product_recommendations = hybrid_recommendations(all_products_data, 4, product["Name"], 2)
+        recommendations.append(product_recommendations)
+
+    return render_template('cart.html', cart_products=cart_products, total_price=total_price, recommendations=recommendations, truncate=truncate)
+
+@app.route("/remove-from-cart/<int:product_id>", methods=["POST"])
+def remove_from_cart(product_id):
+    cart = session.get("cart", [])
+    cart.remove(product_id)
+    session["cart"] = cart
+    return redirect(url_for("cart"))
 
 if __name__ == '__main__':
     app.run(debug=True)
