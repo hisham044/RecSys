@@ -125,22 +125,30 @@ def hybrid_recommendations(data, target_user_id, item_name, top_n=10):
     
     return hybrid_rec.head(top_n)
 
-user = 4
-cf_recommendations = collaborative_filtering_recommendations(all_products_data, user, 8)
-
 @app.route("/")
 def index():
+    user = 4
+    cf_recommendations = collaborative_filtering_recommendations(all_products_data, user, 8)
+    trending_products = rating_based_recommendation(all_products_data)
     return render_template('index.html', trending_products=trending_products.head(8), truncate=truncate, cf_recommendations=cf_recommendations)
 
 @app.route("/all-products")
 def all_products():
-    search_query = request.args.get('search')    
+    search_query = request.args.get('search')
     if search_query:
         filtered_products = all_products_data[all_products_data.apply(lambda row: search_query.lower() in row.astype(str).str.lower().values, axis=1)]
     else:
-        filtered_products = get_products(all_products_data, 0, 20)  # data, start_index, how_many
+        filtered_products = get_products(all_products_data, 0, 20)
         
     return render_template('all_products.html', all_products=filtered_products, truncate=truncate)
+
+
+@app.route("/product/<int:product_id>")
+def product_detail(product_id):
+    product = all_products_data.loc[product_id]
+    similar_products = content_based_recommendations(all_products_data, product['Name'], 8)
+    return render_template('product.html', product=product, similar_products=similar_products, truncate=truncate)
+
 
 if __name__ == '__main__':
     app.run(debug=True)

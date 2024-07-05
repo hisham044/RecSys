@@ -168,85 +168,17 @@
       <!-- Product Cards -->
       <div class="row mt-4" id="productList">
         {% for index, product in all_products.iterrows() %}
-        <div class="col-lg-3 col-md-4 col-sm-6 mb-4 product-card" data-name="{{ product['Name'] }}">
-          <div class="card" onclick="showProductModal('{{ index }}')">
-            <img
-              src="{{ product['ImageURL'] }}"
-              class="card-img-top"
-              alt="{{ product['Name'] }}"
-              style="height: 200px"
-            />
-            <div class="card-body">
-              <h5 class="card-title">{{ truncate(product['Name'], 17) }}</h5>
-              <p class="card-text">Brand: {{ product['Brand'] }}</p>
-              <p class="card-text">Rating: {{ product['Rating'] }}</p>
-              <p class="card-text">Price: ${{ product['Price'] }}</p>
-            </div>
-          </div>
-        </div>
-        <!-- Modal -->
-        <div
-          class="modal fade"
-          id="productModal{{ index }}"
-          tabindex="-1"
-          role="dialog"
-          aria-labelledby="productModalLabel{{ index }}"
-          aria-hidden="true"
-        >
-          <div class="modal-dialog modal-lg" role="document">
-            <div class="modal-content">
-              <div class="modal-header">
-                <h5 class="modal-title" id="productModalLabel{{ index }}">{{ product['Name'] }}</h5>
-                <button
-                  type="button"
-                  class="close"
-                  data-dismiss="modal"
-                  aria-label="Close"
-                >
-                  <span aria-hidden="true">&times;</span>
-                </button>
-              </div>
-              <div class="modal-body">
-                <div class="container-fluid">
-                  <div class="row">
-                    <div class="col-md-6">
-                      <img
-                        src="{{ product['ImageURL'] }}"
-                        class="img-fluid"
-                        alt="{{ product['Name'] }}"
-                      />
-                    </div>
-                    <div class="col-md-6">
-                      <p><strong>Brand:</strong> {{ product['Brand'] }}</p>
-                      <p><strong>Rating:</strong> {{ product['Rating'] }}</p>
-                      <p><strong>Review Count:</strong> {{ product['ReviewCount'] }}</p>
-                      <p><strong>Description:</strong></p>
-                      <p>
-                        {{ product['Description'] }}
-                      </p>
-                      <p><strong>Price:</strong> ${{ product['Price'] }}</p>
-                      
-                    </div>
-                  </div>
+        <div class="col-lg-3 col-md-4 col-sm-6 mb-4 product-card">
+            <div class="card">
+                <a href="{{ url_for('product_detail', product_id=product.name) }}">
+                    <img src="{{ product['ImageURL'] }}" class="card-img-top" alt="{{ product['Name'] }}" style="height: 200px;">
+                </a>
+                <div class="card-body">
+                    <h5 class="card-title">{{ truncate(product['Name'], 17) }}</h5>
+                    <p class="card-text">Brand: {{ product['Brand'] }}</p>
+                    <p class="card-text">Rating: {{ product['Rating'] }}</p>
                 </div>
-              </div>
-              <div class="modal-footer">
-                <button
-                  type="button"
-                  class="btn btn-primary"
-                  data-dismiss="modal">
-                  Add to Cart
-                </button>
-                <button
-                  type="button"
-                  class="btn btn-primary"
-                  data-dismiss="modal"
-                >
-                  Buy Now
-                </button>
-              </div>
             </div>
-          </div>
         </div>
         {% endfor %}
       </div>
